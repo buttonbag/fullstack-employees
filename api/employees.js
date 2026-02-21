@@ -1,4 +1,4 @@
-import { getEmployee, getEmployees } from "#db/queries/employees";
+import { getEmployee, getEmployees, updateEmployee } from "#db/queries/employees";
 import express from "express";
 const router = express.Router();
 export default router;
@@ -49,6 +49,20 @@ router.get("/:id", (req,res)=>{
   res.send(req.employee);
 });
 
-// router.put("/:id", (req,res)=>{
+router.put("/:id", async(req,res)=>{
+  if(!req.body) res.status(400).send('Body is not provided');
 
-// });
+  const {name, birthday, salary} = req.body;
+  if (!name || !birthday || !salary) {
+    res.status(400).send('Body is missing a required field');
+  }
+
+  // update employee
+  const updatedEmployee = await updateEmployee({
+    id: req.employee.id,
+    name, 
+    birthday,
+    salary,
+  });
+  res.send(updatedEmployee);
+});
