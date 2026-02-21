@@ -1,4 +1,4 @@
-import { getEmployee, getEmployees, updateEmployee } from "#db/queries/employees";
+import { deleteEmployee, getEmployee, getEmployees, updateEmployee } from "#db/queries/employees";
 import express from "express";
 const router = express.Router();
 export default router;
@@ -37,6 +37,7 @@ router.get("/", async(req,res)=>{
 // router.param allows us to reuse the logic for parsing the ID parameter!
 router.param("id", async(req, res, next, id)=>{
   // find the specified id
+  if(+id < 0) res.status(400).send('provided id is not a positive integer.');
   const employee = await getEmployee(id);
   if (!employee) res.status(404).send('Employee does not exist.');
     
@@ -65,4 +66,17 @@ router.put("/:id", async(req,res)=>{
     salary,
   });
   res.send(updatedEmployee);
+});
+
+
+/**
+ * DELETE /employees/:id
+ * Sends 404 if employee does not exist
+ * Deletes the specified employee and sends status 204
+ */
+router.delete("/:id", async(req,res)=>{
+  if(!req.body) res.status(400).send('Body is not provided');
+
+  await deleteEmployee(req.employee.id);
+  res.sendStatus(204);
 });

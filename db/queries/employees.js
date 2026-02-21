@@ -59,4 +59,7 @@ export async function updateEmployee({ id, name, birthday, salary }) {
  */
 export async function deleteEmployee(id) {
   // TODO
+  const sql = `DELETE FROM employees WHERE id= $1`;
+  const {rows: [deletedEmployee]} = await db.query(sql, [id]);
+  return deletedEmployee;
 }
