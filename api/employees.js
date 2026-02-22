@@ -1,4 +1,4 @@
-import { deleteEmployee, getEmployee, getEmployees, updateEmployee } from "#db/queries/employees";
+import { createEmployee, deleteEmployee, getEmployee, getEmployees, updateEmployee } from "#db/queries/employees";
 import express from "express";
 const router = express.Router();
 export default router;
@@ -14,16 +14,21 @@ router.get("/", async(req,res)=>{
  * Sends 400 if request body is missing a required field
  * Sends the newly created employee with status 201
  */
-// router.post("/", async(req,res)=>{
-//   if(!req.body) res.status(400).send('Body is not provided');
+router.post("/", async(req,res)=>{
+  if(!req.body) res.status(400).send('Body is not provided');
 
-//   const {name, birthday, salary} = req.body;
-//   if (!name || !birthday || !salary) {
-//     res.status(400).send('Body is missing a required field');
-//   }
+  const {name, birthday, salary} = req.body;
+  if (!name || !birthday || !salary) {
+    res.status(400).send('Body is missing a required field');
+  }
 
-
-// });
+  const newlyCreatedEmployee = await createEmployee({
+    name, 
+    birthday,
+    salary,
+  });
+  res.status(201).send(newlyCreatedEmployee);
+});
 
 /**
  * PUT /employees/:id updates employee with specified ID with provided data
@@ -37,7 +42,7 @@ router.get("/", async(req,res)=>{
 // router.param allows us to reuse the logic for parsing the ID parameter!
 router.param("id", async(req, res, next, id)=>{
   // find the specified id
-  if(+id < 0) res.status(400).send('provided id is not a positive integer.');
+  // if(+id < 0) res.status(400).send('provided id is not a positive integer.');
   const employee = await getEmployee(id);
   if (!employee) res.status(404).send('Employee does not exist.');
     

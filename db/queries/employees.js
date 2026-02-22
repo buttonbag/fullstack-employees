@@ -9,7 +9,6 @@ export async function createEmployee({ name, birthday, salary }) {
       RETURNING *
     `, [name, birthday, salary]);
     
-    console.log(`NEWLY CREATED EMPLOYEE:`, newlyCreatedEmployee);
     return newlyCreatedEmployee;
 }
 
